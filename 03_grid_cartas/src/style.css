@@ -1,0 +1,15 @@
+body{
+  background-color: #96c9dcff;
+}
+
+.imagen-carta > img {
+  background-color: #f06c9bff;
+  padding: 10px;
+  border-radius: 10%;
+}
+
+/*
+--moonstone: #61a0afff;
+--sky-blue: #96c9dcff;
+--cyclamen: #f06c9bff;
+*/
