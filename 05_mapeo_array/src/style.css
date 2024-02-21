@@ -1,8 +1,7 @@
 .contenedor-cartas {
   background-color: #96c9dcff;
   display: grid;
-  grid-template-columns: repeat(4, 128px); 
-  grid-template-rows: repeat(3, 128px); 
+  grid-template-columns: repeat(4, 200px); 
   justify-content: center;
   gap: 10px;
   padding: 20px;
@@ -10,10 +9,9 @@
 
 .divCarta {
   background-color: #f06c9bff;
-  height: 128px;
-  width: 128px;
-  gap: 10px;
-  border-radius: 10px;
+  height: 150px;
+  width: 150px;
+  border-radius: 15px;
   display: flex;
   justify-content: center;
   align-items: center;  
