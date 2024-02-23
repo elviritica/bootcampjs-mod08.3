@@ -1,0 +1,28 @@
+.contenedor-cartas {
+  background-color: #96c9dcff;
+  display: grid;
+  grid-template-columns: repeat(4, 200px); 
+  justify-content: center;
+  gap: 10px;
+  padding: 20px;
+}
+
+.divCarta {
+  background-color: #f06c9bff;
+  height: 150px;
+  width: 150px;
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;  
+}
+
+.carta {
+  border-radius: 10px;
+}
+
+/*
+--moonstone: #61a0afff;
+--sky-blue: #96c9dcff;
+--cyclamen: #f06c9bff;
+*/
