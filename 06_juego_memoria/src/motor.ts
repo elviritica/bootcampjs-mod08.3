@@ -3,7 +3,7 @@ import { Carta, EstadoPartida, Tablero, cartas, crearTableroInicial } from "./mo
 /*
 En el motor nos va a hacer falta un método para barajar cartas
 */
-const barajarCartas = (cartas : Carta[]): Carta[] => {
+export const barajarCartas = (cartas : Carta[]): Carta[] => {
     for (let i = cartas.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [cartas[i], cartas[j]] = [cartas[j], cartas[i]];
@@ -114,8 +114,9 @@ Iniciar partida
 */
 
 export const iniciaPartida = (tablero: Tablero): void => {
+    // poner aqui un par de consolelogs para comprobar si me está barajando
     tablero.cartas = barajarCartas(tablero.cartas);
-
+    
     
     tablero.cartas.forEach((carta) => {
         carta.estaVuelta = false;

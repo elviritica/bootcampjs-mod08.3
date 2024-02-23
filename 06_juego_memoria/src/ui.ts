@@ -1,5 +1,5 @@
 import { Carta, Tablero, tablero, cartas } from "./modelo";
-import { iniciaPartida, voltearLaCarta } from "./motor";
+import { iniciaPartida, voltearLaCarta, barajarCartas } from "./motor";
 
 const crearContenedor = (nombreClase: string): HTMLDivElement => {
     const contenedor = document.createElement("div");
@@ -23,7 +23,7 @@ export const iniciaPartidaUI = (tablero : Tablero) : void => {
 }
 
 export function pintarTablero(tablero : Tablero){
-    const cartas = tablero.cartas;
+    const cartas = barajarCartas(tablero.cartas);
     //Obtener el div ppal
     const contenedorCartas = document.getElementById("contenedor-cartas") as HTMLDivElement;
 
