@@ -33,7 +33,7 @@ function voltearCarta(img: HTMLImageElement, nuevoSrc: string){
 ;}
 
 
-document.addEventListener("DOMContentLoaded", function(){
+document.addEventListener("DOMContentLoaded", () => {
 
     //Obtener el div ppal
     const contenedorCartas = document.getElementById("contenedor-cartas") as HTMLDivElement;

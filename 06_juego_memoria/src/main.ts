@@ -1,9 +1,9 @@
+import { tablero } from "./modelo";
 import "./style.css";
-import { pintarTablero } from "./ui";
-import { Tablero, cartas, crearTableroInicial } from "./modelo";
+import { iniciarPartidaUI } from "./ui";
 
-let tablero : Tablero = crearTableroInicial(cartas);
 
-pintarTablero(tablero);
+console.log(tablero.estadoPartida);
+iniciarPartidaUI(tablero);
+console.log(tablero.estadoPartida);
 
-console.log(cartas)

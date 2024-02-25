@@ -1,5 +1,11 @@
-import { Carta, Tablero, tablero, cartas } from "./modelo";
-import { iniciaPartida, voltearLaCarta, barajarCartas } from "./motor";
+import { Tablero, tablero } from "./modelo";
+import { iniciaPartida, parejaEncontrada, parejaNoEncontrada, sonPareja, voltearLaCarta } from "./motor";
+
+
+export function iniciarPartidaUI(tablero:Tablero){
+    iniciaPartida(tablero);
+    pintarTablero(tablero);
+}
 
 const crearContenedor = (nombreClase: string): HTMLDivElement => {
     const contenedor = document.createElement("div");
@@ -17,60 +23,85 @@ const crearContenedorImg = (nombreClase: string): HTMLImageElement => {
     return contenedor;
 };
 
-export const iniciaPartidaUI = (tablero : Tablero) : void => {
-    iniciaPartida(tablero);
-    pintarTablero(tablero);
+export function pintarTablero (tablero : Tablero){
+
+    const contenedorCartas = document.getElementById('contenedor-cartas');
+
+    if(contenedorCartas && contenedorCartas instanceof HTMLDivElement){
+        tablero.cartas.forEach((carta)=>{
+            let index = carta.idFoto;
+
+            const divCarta = crearContenedor("divCarta");
+            divCarta.setAttribute("data-indice", index.toString());
+            
+            const imgCarta = crearContenedorImg("carta");
+            imgCarta.setAttribute("data-indice-imagen", index.toString());
+
+            imgCarta.addEventListener("click", () => {
+                handleClickCarta(index);
+                
+            });
+
+            divCarta.appendChild(imgCarta);
+            contenedorCartas.appendChild(divCarta);
+        })
+    };
 }
 
-export function pintarTablero(tablero : Tablero){
-    const cartas = barajarCartas(tablero.cartas);
-    //Obtener el div ppal
-    const contenedorCartas = document.getElementById("contenedor-cartas") as HTMLDivElement;
 
-    cartas.forEach((carta) => {
-        let index = carta.idFoto;
-        //Comprobar que el div ppal existe
-        if(contenedorCartas && contenedorCartas instanceof HTMLDivElement){
-            //Crear el div de la carta
-            const divCarta = crearContenedor("divCarta");
-            //Añadir el atributo data-indice según el idFoto de la carta
-            divCarta.setAttribute("data-indice", index.toString());
-            //Añadir el div de la carta al div ppal
-            contenedorCartas.appendChild(divCarta);
-            //Crear la img 
-            const imgCarta = crearContenedorImg("carta");
-            //Añadir el atributo data-indice según el idFoto de la carta
-            imgCarta.setAttribute("data-indice", index.toString());
-            //Añadir el div de la imagen al div de la carta
-            divCarta.appendChild(imgCarta);
-            
-        }
-    })
+/*
+En cuanto el usuario pinche en una carta:
 
-    // Obtener todos los divs con la clase divCarta
-    const divsCartas = document.querySelectorAll(".divCarta");
+Miramos si la carta es volteable (ver motor).
+Si es volteable la voltearemos (cambiamos el src de la imagen), para la imagen sería recomendable crear data-indice-imagen, va a coincidir con el índice del div para pintar la imagen correspondiente al índice del array de cartas.
+Comprobamos si estamos elegiendo una carta o estamos en la segunda.
+Si estamos en la segunda comprobamos si son pareja o no.
+En caso de que si las dejamos fijas.
+En caso de que no esperamos un segundo (setTimeout) y las ponemos boca abajo (reseteamos su estado sin voltear)
+Vuelta a empezar
 
-    divsCartas.forEach((divCarta) => {
-        divCarta.addEventListener("click", () => {
-            // Obtener todos los img dentro de los divs
-            const imgCarta = divCarta.querySelector("img") as HTMLImageElement;
+*/
+export function handleClickCarta(indice: number) {
+    const cartaSeleccionada = document.querySelector(`[data-indice-imagen="${indice}"]`) as HTMLImageElement;
 
-            // Obtener el índice de la carta desde el atributo data-indice del div
-            const indiceCartaAtributo = divCarta.getAttribute("data-indice");
+    // Voltea la carta si es posible
+    voltearLaCarta(tablero, indice);
 
-            if(indiceCartaAtributo !== null){
-                //Pasar el índice a Int para poder hacer la comprobación más adelante
-                const indiceCarta = parseInt(indiceCartaAtributo);
+    // Si la carta se volteó, actualiza la imagen y el estado del juego
+    if (tablero.cartas[indice].estaVuelta) {
+        cartaSeleccionada.src = tablero.cartas[indice].imagen;
 
-                // Encontrar la carta correspondiente en el array de cartas usando el índice obtenido
-                const cartaEncontrada = cartas.find((carta) => carta.idFoto === indiceCarta);
+        if (tablero.estadoPartida === "CeroCartasLevantadas") {
+            tablero.indiceCartaVolteadaA = indice;
+            tablero.estadoPartida = "UnaCartaLevantada";
+        } else if (tablero.estadoPartida === "UnaCartaLevantada") {
+            tablero.indiceCartaVolteadaB = indice;
+            tablero.estadoPartida = "DosCartasLevantadas";
 
-                // Obtener la ruta de la imagen de la carta encontrada
-                if(cartaEncontrada){
-                    voltearLaCarta(tablero, indiceCarta);
-                }                
+            // Comprueba si las dos cartas forman pareja
+            if(tablero.indiceCartaVolteadaA !== undefined && tablero.indiceCartaVolteadaB !== undefined){
+                if (sonPareja(tablero, tablero.indiceCartaVolteadaA, tablero.indiceCartaVolteadaB)) {
+                    // Si son pareja, las deja fijas y restablece el estado del juego
+                    parejaEncontrada(tablero, tablero.indiceCartaVolteadaA, tablero.indiceCartaVolteadaB);
+                    tablero.indiceCartaVolteadaA = undefined;
+                    tablero.indiceCartaVolteadaB = undefined;
+                    tablero.estadoPartida = "CeroCartasLevantadas";
+                } else {
+                    // Si no son pareja, espera un segundo y luego las voltea de nuevo
+                    setTimeout(() => {
+                        if (tablero.indiceCartaVolteadaA !== undefined && tablero.indiceCartaVolteadaB !== undefined) {
+                            parejaNoEncontrada(tablero, tablero.indiceCartaVolteadaA, tablero.indiceCartaVolteadaB);
+                            const cartaVolteadaA = document.querySelector(`[data-indice-imagen="${tablero.indiceCartaVolteadaA}"]`) as HTMLImageElement;
+                            const cartaVolteadaB = document.querySelector(`[data-indice-imagen="${tablero.indiceCartaVolteadaB}"]`) as HTMLImageElement;
+                            cartaVolteadaA.src = "/src/images/carta-detras-rosa.png";
+                            cartaVolteadaB.src = "/src/images/carta-detras-rosa.png";
+                            tablero.indiceCartaVolteadaA = undefined;
+                            tablero.indiceCartaVolteadaB = undefined;
+                            tablero.estadoPartida = "CeroCartasLevantadas";
+                        }
+                    }, 1000);
+                }
             }
-            
-        });
-    });
+        }
+    }
 }

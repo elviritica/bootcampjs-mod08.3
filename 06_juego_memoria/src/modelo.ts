@@ -26,14 +26,15 @@ const crearCartaInicial = (idFoto: number, imagen: string): Carta => ({
     encontrada: false,
 });
 
+/* Aquí crearemos un array de cartas a partir de un array de infoCartas
+    y duplicaremos las cartas para que haya dos de cada tipo.
+*/
 const crearColeccionDeCartasInicial = (infoCartas: InfoCarta[]): Carta[] => {
-    /* Aquí crearemos un array de cartas a partir de un array de infoCartas
-        y duplicaremos las cartas para que haya dos de cada tipo.
-    */
-    const coleccionDeCartas: Carta[] = infoCartas.flatMap(carta => [
-        crearCartaInicial(carta.idFoto, carta.imagen),
-        crearCartaInicial(carta.idFoto, carta.imagen)
-    ]);
+    const coleccionDeCartas: Carta[] = [];
+    infoCartas.forEach((carta) => {
+        coleccionDeCartas.push(crearCartaInicial(carta.idFoto, carta.imagen));
+        coleccionDeCartas.push(crearCartaInicial(carta.idFoto, carta.imagen));
+    })
 
     return coleccionDeCartas;
 
