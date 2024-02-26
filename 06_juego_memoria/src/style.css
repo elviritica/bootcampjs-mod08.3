@@ -1,15 +1,80 @@
-.contenedor-cartas {
-  background-color: #96c9dcff;
+:root {
+  --primario: #adeee3ff;
+  --secundario: #86deb7ff;
+  --terciario: #63b995ff; 
+  --acento: #50723cff;
+}
+
+body{
+  background-color: var(--primario);
   display: grid;
+  justify-items: center;
+  gap: 10px;
+}
+
+.boton {
+  font-family: "Poppins", sans-serif;
+  background-color: var(--acento);
+  color: #ffffff;
+  border: none;
+  border-radius: 15px;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+}
+
+.boton:hover {
+  background-color: #ffffff;
+  color: var(--acento);
+}
+
+h1{
+  font-family: "Poppins", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.texto{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0px;
+}
+
+.texto>p{
+  margin: 0;
+}
+
+
+p {
+  font-family: "Poppins", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+
+}
+
+.contenedor-cartas {
+  background-color: var(--secundario);
+  display: grid;
+  height: 580px;
+  width: 780px;
   grid-template-columns: repeat(4, 200px); 
   grid-template-rows: repeat(4, 200px); 
   justify-content: center;
-  gap: 10px;
+  justify-items: center;
   padding: 20px;
+  border-radius: 15px;
+  align-items: center;
 }
 
 .divCarta {
-  background-color: #f06c9bff;
+  background-color: var(--acento);
   height: 150px;
   width: 150px;
   border-radius: 15px;
@@ -21,9 +86,3 @@
 .carta {
   border-radius: 10px;
 }
-
-/*
---moonstone: #61a0afff;
---sky-blue: #96c9dcff;
---cyclamen: #f06c9bff;
-*/
