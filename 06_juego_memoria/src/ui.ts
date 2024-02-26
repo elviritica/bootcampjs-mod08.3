@@ -1,11 +1,17 @@
-import { Tablero, tablero } from "./modelo";
+import { REVERSO_CARTA, Tablero, tablero } from "./modelo";
 import { cambiarEstadoPartida, iniciaPartida, parejaEncontrada, parejaNoEncontrada, sonPareja, voltearLaCarta } from "./motor";
 
+export const botonIniciar = document.getElementById("boton-iniciar") as HTMLButtonElement;
 
 export function iniciarPartidaUI(tablero:Tablero){
     iniciaPartida(tablero);
     pintarTablero(tablero);
+    muestraPuntos()
 }
+
+botonIniciar.addEventListener("click", () => {
+    iniciarPartidaUI(tablero);
+});
 
 let idContadorA = 0;
 let idContadorB = 0;
@@ -21,16 +27,37 @@ const crearContenedorImg = (nombreClase: string): HTMLImageElement => {
     const contenedor = document.createElement("img");
     contenedor.classList.add(nombreClase);
     contenedor.id = nombreClase + idContadorB++;
-    contenedor.src = "/src/images/carta-detras-rosa.png";
+    contenedor.src = REVERSO_CARTA;
     contenedor.alt = "Carta";
     return contenedor;
 };
+
+let contadorTurnos = 0;
+let esPrimerClick = true;
+
+export function contadorTurnosUI() {
+    if (!esPrimerClick) {
+        contadorTurnos++;
+    }
+    esPrimerClick = !esPrimerClick;
+}
+
+export function muestraPuntos(){
+    const turnos = document.getElementById("contador-turnos") as HTMLDivElement;
+    if (turnos) {
+        turnos.innerHTML = contadorTurnos.toString();
+    }
+}
 
 export function pintarTablero (tablero : Tablero){
 
     const contenedorCartas = document.getElementById('contenedor-cartas');
 
     if(contenedorCartas && contenedorCartas instanceof HTMLDivElement){
+        while (contenedorCartas.firstChild) {
+            contenedorCartas.removeChild(contenedorCartas.firstChild);
+        }
+
         tablero.cartas.forEach((carta)=>{
             let index = carta.idFoto;
             let posicion = tablero.cartas.indexOf(carta);
@@ -42,7 +69,10 @@ export function pintarTablero (tablero : Tablero){
             imgCarta.setAttribute("data-indice-imagen", index.toString());
 
             imgCarta.addEventListener("click", () => {
+                contadorTurnosUI();
                 handleClickCarta(posicion);
+                muestraPuntos();
+
                 
             });
 
@@ -53,18 +83,6 @@ export function pintarTablero (tablero : Tablero){
 }
 
 
-/*
-En cuanto el usuario pinche en una carta:
-
-Miramos si la carta es volteable (ver motor).
-Si es volteable la voltearemos (cambiamos el src de la imagen), para la imagen sería recomendable crear data-indice-imagen, va a coincidir con el índice del div para pintar la imagen correspondiente al índice del array de cartas.
-Comprobamos si estamos elegiendo una carta o estamos en la segunda.
-Si estamos en la segunda comprobamos si son pareja o no.
-En caso de que si las dejamos fijas.
-En caso de que no esperamos un segundo (setTimeout) y las ponemos boca abajo (reseteamos su estado sin voltear)
-Vuelta a empezar
-
-*/
 export function handleClickCarta(indice: number) {
     const cartaSeleccionada = document.getElementById(`carta${indice}`) as HTMLImageElement;
 
@@ -98,8 +116,8 @@ export function handleClickCarta(indice: number) {
                             parejaNoEncontrada(tablero, tablero.indiceCartaVolteadaA, tablero.indiceCartaVolteadaB);
                             const cartaVolteadaA = document.getElementById(`carta${tablero.indiceCartaVolteadaA}`) as HTMLImageElement;
                             const cartaVolteadaB = document.getElementById(`carta${tablero.indiceCartaVolteadaB}`) as HTMLImageElement;
-                            cartaVolteadaA.src = "/src/images/carta-detras-rosa.png";
-                            cartaVolteadaB.src = "/src/images/carta-detras-rosa.png";
+                            cartaVolteadaA.src = REVERSO_CARTA;
+                            cartaVolteadaB.src = REVERSO_CARTA;
                             tablero.indiceCartaVolteadaA = undefined;
                             tablero.indiceCartaVolteadaB = undefined;
                             cambiarEstadoPartida(tablero);

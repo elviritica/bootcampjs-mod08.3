@@ -1,3 +1,5 @@
+export const REVERSO_CARTA = "./src/images/carta-detras-verde.png";
+
 export interface Carta {
     idFoto: number; // id del 1 al 6 para 12 cartas, se repete 2 veces en el array de cartas 
     imagen: string; // por comodidad repetimos la url de la imagen
