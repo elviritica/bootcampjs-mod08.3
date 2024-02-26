@@ -1,5 +1,5 @@
 import { Tablero, tablero } from "./modelo";
-import { iniciaPartida, parejaEncontrada, parejaNoEncontrada, sonPareja, voltearLaCarta } from "./motor";
+import { cambiarEstadoPartida, iniciaPartida, parejaEncontrada, parejaNoEncontrada, sonPareja, voltearLaCarta } from "./motor";
 
 
 export function iniciarPartidaUI(tablero:Tablero){
@@ -7,17 +7,20 @@ export function iniciarPartidaUI(tablero:Tablero){
     pintarTablero(tablero);
 }
 
+let idContadorA = 0;
+let idContadorB = 0;
+
 const crearContenedor = (nombreClase: string): HTMLDivElement => {
     const contenedor = document.createElement("div");
     contenedor.classList.add(nombreClase);
-    contenedor.id = nombreClase;
+    contenedor.id = nombreClase + idContadorA++;
     return contenedor;
 };
 
 const crearContenedorImg = (nombreClase: string): HTMLImageElement => {
     const contenedor = document.createElement("img");
     contenedor.classList.add(nombreClase);
-    contenedor.id = nombreClase;
+    contenedor.id = nombreClase + idContadorB++;
     contenedor.src = "/src/images/carta-detras-rosa.png";
     contenedor.alt = "Carta";
     return contenedor;
@@ -30,6 +33,7 @@ export function pintarTablero (tablero : Tablero){
     if(contenedorCartas && contenedorCartas instanceof HTMLDivElement){
         tablero.cartas.forEach((carta)=>{
             let index = carta.idFoto;
+            let posicion = tablero.cartas.indexOf(carta);
 
             const divCarta = crearContenedor("divCarta");
             divCarta.setAttribute("data-indice", index.toString());
@@ -38,7 +42,7 @@ export function pintarTablero (tablero : Tablero){
             imgCarta.setAttribute("data-indice-imagen", index.toString());
 
             imgCarta.addEventListener("click", () => {
-                handleClickCarta(index);
+                handleClickCarta(posicion);
                 
             });
 
@@ -62,7 +66,7 @@ Vuelta a empezar
 
 */
 export function handleClickCarta(indice: number) {
-    const cartaSeleccionada = document.querySelector(`[data-indice-imagen="${indice}"]`) as HTMLImageElement;
+    const cartaSeleccionada = document.getElementById(`carta${indice}`) as HTMLImageElement;
 
     // Voltea la carta si es posible
     voltearLaCarta(tablero, indice);
@@ -73,10 +77,10 @@ export function handleClickCarta(indice: number) {
 
         if (tablero.estadoPartida === "CeroCartasLevantadas") {
             tablero.indiceCartaVolteadaA = indice;
-            tablero.estadoPartida = "UnaCartaLevantada";
+            cambiarEstadoPartida(tablero);
         } else if (tablero.estadoPartida === "UnaCartaLevantada") {
             tablero.indiceCartaVolteadaB = indice;
-            tablero.estadoPartida = "DosCartasLevantadas";
+            cambiarEstadoPartida(tablero);
 
             // Comprueba si las dos cartas forman pareja
             if(tablero.indiceCartaVolteadaA !== undefined && tablero.indiceCartaVolteadaB !== undefined){
@@ -85,21 +89,24 @@ export function handleClickCarta(indice: number) {
                     parejaEncontrada(tablero, tablero.indiceCartaVolteadaA, tablero.indiceCartaVolteadaB);
                     tablero.indiceCartaVolteadaA = undefined;
                     tablero.indiceCartaVolteadaB = undefined;
-                    tablero.estadoPartida = "CeroCartasLevantadas";
+                    cambiarEstadoPartida(tablero);
+
                 } else {
-                    // Si no son pareja, espera un segundo y luego las voltea de nuevo
+                    // Si no son pareja, espera un segundo y luego las voltea de nuevo                    
                     setTimeout(() => {
                         if (tablero.indiceCartaVolteadaA !== undefined && tablero.indiceCartaVolteadaB !== undefined) {
                             parejaNoEncontrada(tablero, tablero.indiceCartaVolteadaA, tablero.indiceCartaVolteadaB);
-                            const cartaVolteadaA = document.querySelector(`[data-indice-imagen="${tablero.indiceCartaVolteadaA}"]`) as HTMLImageElement;
-                            const cartaVolteadaB = document.querySelector(`[data-indice-imagen="${tablero.indiceCartaVolteadaB}"]`) as HTMLImageElement;
+                            const cartaVolteadaA = document.getElementById(`carta${tablero.indiceCartaVolteadaA}`) as HTMLImageElement;
+                            const cartaVolteadaB = document.getElementById(`carta${tablero.indiceCartaVolteadaB}`) as HTMLImageElement;
                             cartaVolteadaA.src = "/src/images/carta-detras-rosa.png";
                             cartaVolteadaB.src = "/src/images/carta-detras-rosa.png";
                             tablero.indiceCartaVolteadaA = undefined;
                             tablero.indiceCartaVolteadaB = undefined;
-                            tablero.estadoPartida = "CeroCartasLevantadas";
+                            cambiarEstadoPartida(tablero);
+
                         }
-                    }, 1000);
+                }, 1000);
+                    
                 }
             }
         }
