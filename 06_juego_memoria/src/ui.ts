@@ -10,7 +10,7 @@ export function iniciarPartidaUI(tablero:Tablero){
 }
 
 botonIniciar.addEventListener("click", () => {
-    iniciarPartidaUI(tablero);
+    window.location.reload();
 });
 
 let idContadorA = 0;
@@ -69,11 +69,16 @@ export function pintarTablero (tablero : Tablero){
             imgCarta.setAttribute("data-indice-imagen", index.toString());
 
             imgCarta.addEventListener("click", () => {
+                //que no cuente puntos si la carta está vuelta
+                if(!carta.estaVuelta) {
                 contadorTurnosUI();
                 handleClickCarta(posicion);
                 muestraPuntos();
+                } else {
+                    alert('Esta carta ya está vuelta, ¡prueba con otra!'); 
+                }
 
-                
+
             });
 
             divCarta.appendChild(imgCarta);

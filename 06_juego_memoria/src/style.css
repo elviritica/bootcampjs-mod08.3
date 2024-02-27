@@ -33,7 +33,19 @@ body{
   color: var(--acento);
 }
 
-h1{
+.boton-turnos{
+  display: flex;
+  flex-direction: row;
+  gap: 30px;
+}
+
+.turnos{
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+h1 {
   font-family: "Poppins", sans-serif;
   font-weight: 700;
   font-style: normal;
@@ -82,6 +94,7 @@ p {
   justify-content: center;
   align-items: center;  
 }
+
 
 .carta {
   border-radius: 10px;
